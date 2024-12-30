@@ -1,0 +1,149 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+// Struktur data untuk menyimpan informasi buku
+struct Buku {
+    int idBuku;
+    string judul;
+    string pengarang;
+    bool dipinjam; // Status apakah buku sedang dipinjam
+};
+
+// Struktur data untuk menyimpan informasi peminjaman
+struct Peminjaman {
+    int idPeminjam;
+    string namaPeminjam;
+    int idBukuDipinjam;
+};
+
+// Deklarasi array buku dan peminjaman
+const int MAX_BUKU = 100;
+const int MAX_PEMINJAMAN = 50;
+Buku daftarBuku[MAX_BUKU];
+Peminjaman daftarPeminjaman[MAX_PEMINJAMAN];
+int jumlahBuku = 0;
+int jumlahPeminjaman = 0;
+
+// Fungsi untuk menambahkan buku baru ke perpustakaan
+void tambahBuku() {
+    if (jumlahBuku < MAX_BUKU) {
+        cout << "Masukkan ID Buku: ";
+        cin >> daftarBuku[jumlahBuku].idBuku;
+        cin.ignore(); // Membersihkan input buffer
+        cout << "Masukkan Judul Buku: ";
+        getline(cin, daftarBuku[jumlahBuku].judul);
+        cout << "Masukkan Pengarang Buku: ";
+        getline(cin, daftarBuku[jumlahBuku].pengarang);
+        daftarBuku[jumlahBuku].dipinjam = false; // Default buku tidak dipinjam
+        jumlahBuku++;
+        cout << "Buku berhasil ditambahkan!\n";
+    } else {
+        cout << "Tidak dapat menambahkan buku, kapasitas penuh.\n";
+    }
+}
+
+// Fungsi untuk menampilkan daftar buku
+void tampilkanBuku() {
+    if (jumlahBuku == 0) {
+        cout << "Tidak ada buku di perpustakaan.\n";
+        return;
+    }
+
+    cout << "\nDaftar Buku di Perpustakaan:\n";
+    for (int i = 0; i < jumlahBuku; i++) {
+        cout << "ID Buku: " << daftarBuku[i].idBuku
+             << ", Judul: " << daftarBuku[i].judul
+             << ", Pengarang: " << daftarBuku[i].pengarang
+             << ", Status: " << (daftarBuku[i].dipinjam ? "Dipinjam" : "Tersedia") << endl;
+    }
+}
+
+// Fungsi untuk menambahkan data peminjaman
+void tambahPeminjaman() {
+    if (jumlahPeminjaman < MAX_PEMINJAMAN) {
+        int idBuku;
+        cout << "Masukkan ID Buku yang ingin dipinjam: ";
+        cin >> idBuku;
+
+        // Cari buku berdasarkan ID
+        bool ditemukan = false;
+        for (int i = 0; i < jumlahBuku; i++) {
+            if (daftarBuku[i].idBuku == idBuku && !daftarBuku[i].dipinjam) {
+                // Buku ditemukan dan tersedia
+                ditemukan = true;
+                daftarBuku[i].dipinjam = true;
+
+                // Masukkan data peminjam
+                cout << "Masukkan ID Peminjam: ";
+                cin >> daftarPeminjaman[jumlahPeminjaman].idPeminjam;
+                cin.ignore(); // Membersihkan input buffer
+                cout << "Masukkan Nama Peminjam: ";
+                getline(cin, daftarPeminjaman[jumlahPeminjaman].namaPeminjam);
+                daftarPeminjaman[jumlahPeminjaman].idBukuDipinjam = idBuku;
+
+                jumlahPeminjaman++;
+                cout << "Peminjaman berhasil dicatat!\n";
+                break;
+            }
+        }
+
+        if (!ditemukan) {
+            cout << "Buku tidak ditemukan atau sedang dipinjam.\n";
+        }
+    } else {
+        cout << "Tidak dapat mencatat peminjaman, kapasitas penuh.\n";
+    }
+}
+
+// Fungsi untuk menampilkan daftar peminjaman
+void tampilkanPeminjaman() {
+    if (jumlahPeminjaman == 0) {
+        cout << "Belum ada data peminjaman.\n";
+        return;
+    }
+
+    cout << "\nDaftar Peminjaman Buku:\n";
+    for (int i = 0; i < jumlahPeminjaman; i++) {
+        cout << "ID Peminjam: " << daftarPeminjaman[i].idPeminjam
+             << ", Nama: " << daftarPeminjaman[i].namaPeminjam
+             << ", ID Buku Dipinjam: " << daftarPeminjaman[i].idBukuDipinjam << endl;
+    }
+}
+
+// Fungsi utama
+int main() {
+    int pilihan;
+    do {
+        cout << "\nMenu Sistem Peminjaman Buku:\n";
+        cout << "1. Tambah Buku\n";
+        cout << "2. Tampilkan Buku\n";
+        cout << "3. Tambah Peminjaman\n";
+        cout << "4. Tampilkan Peminjaman\n";
+        cout << "5. Keluar\n";
+        cout << "Pilih opsi: ";
+        cin >> pilihan;
+
+        switch (pilihan) {
+            case 1:
+                tambahBuku();
+                break;
+            case 2:
+                tampilkanBuku();
+                break;
+            case 3:
+                tambahPeminjaman();
+                break;
+            case 4:
+                tampilkanPeminjaman();
+                break;
+            case 5:
+                cout << "Keluar dari program.\n";
+                break;
+            default:
+                cout << "Pilihan tidak valid.\n";
+        }
+    } while (pilihan != 5);
+
+    return 0;
+}
